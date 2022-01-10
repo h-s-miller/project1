@@ -95,9 +95,16 @@ class Parser:
             # You will need to look at the `Try` / `Except` keywords in python
             # and implement an exception for the error you will find in
             # the error message you receive. 
+
+
+            
             while True:
-                rec = self.get_record(f_obj)
-                yield rec
+                try:
+                    rec = self.get_record(f_obj)
+                    for seq in rec: #get record() itself is an iterator, so we iterate over it in here...
+                        yield seq
+                except:
+                    break
 
     def _get_record(self, f_obj: io.TextIOWrapper) -> Union[Tuple[str, str], Tuple[str, str, str]]:
         """
@@ -112,12 +119,33 @@ class Parser:
 class FastaParser(Parser):
     """
     Fasta Specific Parsing
+
+    inspired by biopython because I didn't understand the assignment fully :) https://github.com/biopython/biopython/blob/master/Bio
+    /SeqIO/FastaIO.py
     """
     def _get_record(self, f_obj: io.TextIOWrapper) -> Tuple[str, str]:
         """
-        returns the next fasta record
+        
         """
+        #grab the first header
+        for line in f_obj:
+            if line[0]=='>':
+                header=line[1:].rstrip()
+                break
+            else:
+                break
 
+        for line in f_obj:
+            if line[0]=='>':
+                yield header, seq #this will return the previous header sequence and quality score of the last record before saving the new header
+                seq='' #reset seq 
+                header=line[1:].rstrip() #save new header
+                continue
+            else:
+                seq=line.rstrip()
+                continue
+
+        yield header, seq
 
 class FastqParser(Parser):
     """
@@ -127,4 +155,32 @@ class FastqParser(Parser):
         """
         returns the next fastq record
         """
+        #grab the first header
+        for line in f_obj:
+            if line[0]=='@':
+                header=line[1:].rstrip()
+                break
+            else:
+                break
+            
+        for line in f_obj:
+            
+            if line[0]=='@':
+                #this will return the previous header sequence and quality score of the last record before saving the new header
+              yield header, seq, qual 
+              seq='' #rest seq
+              qual='' #rest qualtiy
+              header=line[1:].rstrip()
+              continue
+          
+            elif line[0]=='+': #the '+' comes between the seq and quality, so we can use it to grab our data without counting lines
+                seq=prev.rstrip() #sequence comes before +
+                qual=next(f_obj).rstrip() # quality comes after +
+                continue
+
+            else:
+                prev=line  #save current line so the '+' loop can access it as 'prev'
+                continue
+
+        yield header, seq, qual
 

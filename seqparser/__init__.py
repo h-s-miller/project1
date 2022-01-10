@@ -37,3 +37,5 @@ from .seq import (
         reverse_transcribe)
 
 __version__ = "0.1.1"
+
+__description__ = "FAST[A][Q] parser and transcriber/reverse transcriber for BMI 203"
