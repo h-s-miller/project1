@@ -28,7 +28,7 @@ def test_FastaParser():
     your FastaParser class and assert that it properly
     reads in the example Fasta File.
     """
-    seq_record=FastaParser('../data/test.fa')
+    seq_record=FastaParser('/data/test.fa')
     first_record=list(seq_record)[0]
     assert (first_record[0]=='seq0') and (first_record[1]=='TGATTGAATCTTTTGAGGGTCACGGCCCGGAAGCCAGAATTTCGGGGTCCTCTGTGGATATTAATCGAGCCCACACGGTGTGAGTTCAGCGGCCCCCGCA')
 
@@ -40,20 +40,20 @@ def test_FastqParser():
     your FastqParser class and assert that it properly
     reads in the example Fastq File.
     """
-    seq_record=FastqParser('../data/test.fq')
+    seq_record=FastqParser('/data/test.fq')
     first_record=list(seq_record)[0]
     assert (first_record[0]=='seq0') and (first_record[1]=='TGTGGTCGTATAGTTATTGTCATAAATTACACAGAATCGCGATTCTCCGCGTCCACCAATCTTAGTGCACCACAGCATCGACCCGATTTATGACGCTGAG')
 
 
 
 def test_FastaParser_2():
-    seq_record=FastaParser('../data/test.fa')
+    seq_record=FastaParser('/data/test.fa')
     num_seqs=len(list(seq_record))
     assert num_seqs == 100
 
 
 def test_FastqParser_2():
-    seq_record=FastqParser('../data/test.fq')
+    seq_record=FastqParser('/data/test.fq')
     num_seqs=len(list(seq_record))
     assert num_seqs == 100
 
